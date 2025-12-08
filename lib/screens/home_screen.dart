@@ -38,8 +38,10 @@ class HomeScreen extends StatelessWidget {
         ),
         itemCount: _products.length,
         itemBuilder: (ctx, index) {
-          final product = _products[index];
-          return ProductItem(product: product);
+          return ProductItem(
+            image: _products[index].imageUrl,
+            title: _products[index].title,
+          );
         },
       ),
     );
