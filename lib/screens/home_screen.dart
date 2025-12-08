@@ -41,6 +41,7 @@ class HomeScreen extends StatelessWidget {
           return ProductItem(
             image: _products[index].imageUrl,
             title: _products[index].title,
+            productId: _products[index].id,
           );
         },
       ),

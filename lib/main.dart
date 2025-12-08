@@ -1,29 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:food_menu/screens/home_screen.dart';
+import './screens/home_screen.dart';
+import './screens/product_details_screen.dart';
+import './styles/my_shop_style.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  ThemeData theme = MyShopStyle.theme;
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal,
-          brightness: Brightness.light, // yoki dark
-        ),
-        appBarTheme: AppBarTheme(
-          backgroundColor: Colors.teal,
-          foregroundColor: Colors.white,
-        ),
-      ),
+      theme: theme,
       home: HomeScreen(),
+      routes: {
+        ProductDetailsScreen.routeName: (ctx) => const ProductDetailsScreen(),
+      },
     );
   }
 }
