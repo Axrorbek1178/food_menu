@@ -12,6 +12,14 @@ class Cart with ChangeNotifier {
     return _items.length;
   }
 
+  double get totalPrice {
+    var total = 0.0;
+    _items.forEach((key, cartItem) {
+      total += cartItem.price * cartItem.quantity;
+    });
+    return total;
+  }
+
   void addToCart(String productId, String title, String image, double price) {
     if (items.containsKey(productId)) {
       //..sonini ko'paytir

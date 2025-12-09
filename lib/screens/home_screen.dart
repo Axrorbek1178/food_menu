@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_menu/screens/cart_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/cart.dart';
@@ -57,7 +58,8 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
             child: IconButton(
-              onPressed: () {},
+              onPressed: () =>
+                  Navigator.pushNamed(context, CartScreen.routeName),
               icon: const Icon(Icons.shopping_cart),
             ),
           ),
