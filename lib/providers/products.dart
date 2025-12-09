@@ -29,26 +29,16 @@ class Products with ChangeNotifier {
     ),
   ];
 
-  var _showOnlyFavorites = false;
-
   List<Product> get list {
-    if (_showOnlyFavorites) {
-      return _list.where((product) => product.isFavorite).toList();
-    }
     return [..._list];
   }
 
-  void showAll() {
-    _showOnlyFavorites = false;
-    notifyListeners();
-  }
-
-  void showFavorites() {
-    _showOnlyFavorites = true;
-    notifyListeners();
+  List<Product> get favorites {
+    return _list.where((product) => product.isFavorite).toList();
   }
 
   void addProduct() {
+    //_list.add(value);
     notifyListeners();
   }
 

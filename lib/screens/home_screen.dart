@@ -2,31 +2,39 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/cart.dart';
-import '../providers/products.dart';
 import '../widgets/custom_cart.dart';
 import '../widgets/products_grid.dart';
 
 enum FiltersOtions { Favorites, All }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  var _showOnlyFavorites = false;
+
+  @override
   Widget build(BuildContext context) {
-    final productData = Provider.of<Products>(context);
+    final cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mening Do\'konim'),
         actions: [
           PopupMenuButton(
             onSelected: (FiltersOtions filter) {
-              if (filter == FiltersOtions.All) {
-                //..barchasiniP ko'rsat
-                productData.showAll();
-              } else {
-                //..sevimlilarni ko'rsat
-                productData.showFavorites();
-              }
+              setState(() {
+                if (filter == FiltersOtions.All) {
+                  //..barchasiniP ko'rsat
+                  _showOnlyFavorites = false;
+                } else {
+                  //..sevimlilarni ko'rsat
+                  _showOnlyFavorites = true;
+                }
+              });
             },
             itemBuilder: (ctx) {
               return [
@@ -55,7 +63,7 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: const ProductsGrid(),
+      body: ProductsGrid(_showOnlyFavorites),
     );
   }
 }
