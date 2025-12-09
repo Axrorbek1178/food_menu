@@ -21,9 +21,8 @@ class ProductsGrid extends StatelessWidget {
       ),
       itemCount: products.length,
       itemBuilder: (ctx, index) {
-        return ChangeNotifierProvider<Product>(
-          create: (ctx) => products[index],
-
+        return ChangeNotifierProvider<Product>.value(
+          value: products[index],
           child: ProductItem(),
         );
       },
