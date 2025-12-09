@@ -1,0 +1,31 @@
+import 'package:flutter/material.dart';
+import '../providers/products.dart';
+import '../widgets/product_item.dart';
+import 'package:provider/provider.dart';
+
+class ProductsGrid extends StatelessWidget {
+  const ProductsGrid({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final productsData = Provider.of<Products>(context);
+    final products = productsData.list;
+    return GridView.builder(
+      padding: const EdgeInsets.all(20),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 1,
+        childAspectRatio: 3 / 2,
+        crossAxisSpacing: 20,
+        mainAxisSpacing: 20,
+      ),
+      itemCount: products.length,
+      itemBuilder: (ctx, index) {
+        return ProductItem(
+          productId: products[index].id,
+          image: products[index].imageUrl,
+          title: products[index].title,
+        );
+      },
+    );
+  }
+}
