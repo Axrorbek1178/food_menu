@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_menu/models/product.dart';
 import '../providers/products.dart';
 import '../widgets/product_item.dart';
 import 'package:provider/provider.dart';
@@ -20,10 +21,10 @@ class ProductsGrid extends StatelessWidget {
       ),
       itemCount: products.length,
       itemBuilder: (ctx, index) {
-        return ProductItem(
-          productId: products[index].id,
-          image: products[index].imageUrl,
-          title: products[index].title,
+        return ChangeNotifierProvider<Product>(
+          create: (ctx) => products[index],
+
+          child: ProductItem(),
         );
       },
     );
