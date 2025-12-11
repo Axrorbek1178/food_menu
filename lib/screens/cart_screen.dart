@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_menu/providers/orders.dart';
 import 'package:food_menu/widgets/cart_list_item.dart';
 import '../providers/cart.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +30,16 @@ class CartScreen extends StatelessWidget {
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  TextButton(onPressed: () {}, child: Text("Buyurtma qilish")),
+                  TextButton(
+                    onPressed: () {
+                      Provider.of<Orders>(
+                        context,
+                        listen: false,
+                      ).addToOrder(cart.items.values.toList(), cart.totalPrice);
+                      cart.clearCart();
+                    },
+                    child: Text("BUYURTMA QILISH"),
+                  ),
                 ],
               ),
             ),
