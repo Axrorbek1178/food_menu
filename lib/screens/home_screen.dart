@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:food_menu/screens/cart_screen.dart';
+import '../screens/cart_screen.dart';
+import '../widgets/app_drawer.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/cart.dart';
@@ -10,6 +11,8 @@ enum FiltersOtions { Favorites, All }
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  static const routName = '/';
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -65,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+      drawer: AppDrawer(),
       body: ProductsGrid(_showOnlyFavorites),
     );
   }

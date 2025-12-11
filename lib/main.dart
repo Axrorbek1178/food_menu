@@ -30,8 +30,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: theme,
-        home: HomeScreen(),
+        initialRoute: HomeScreen.routName,
         routes: {
+          HomeScreen.routName: (ctx) => HomeScreen(),
           ProductDetailsScreen.routeName: (ctx) => const ProductDetailsScreen(),
           CartScreen.routeName: (ctx) => const CartScreen(),
           OrdersScreen.routName: (ctx) => const OrdersScreen(),
