@@ -43,6 +43,44 @@ class ProductItem extends StatelessWidget {
                   product.imageUrl,
                   product.price,
                 );
+                // ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+                // ScaffoldMessenger.of(context).showMaterialBanner(
+                //   MaterialBanner(
+                //     backgroundColor: Colors.grey.shade800,
+                //     content: Text(
+                //       "Savatchaga qo'shildi",
+                //       style: TextStyle(color: Colors.white),
+                //     ),
+                //     actions: [
+                //       TextButton(
+                //         onPressed: () {
+                //           cart.removeSingleItem(product.id, isCartButton: true);
+                //           ScaffoldMessenger.of(
+                //             context,
+                //           ).hideCurrentMaterialBanner();
+                //         },
+                //         child: Text("BEKOR QILISH"),
+                //       ),
+                //     ],
+                //   ),
+                // );
+                // Future.delayed(Duration(seconds: 2)).then(
+                //   (value) =>
+                //       ScaffoldMessenger.of(context).hideCurrentMaterialBanner(),
+                // );
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    duration: Duration(seconds: 2),
+                    content: Text("Savatchaga qo'shildi"),
+                    action: SnackBarAction(
+                      label: "BEKOR QILISH",
+                      onPressed: () {
+                        cart.removeSingleItem(product.id, isCartButton: true);
+                      },
+                    ),
+                  ),
+                );
               },
               icon: Icon(
                 Icons.shopping_cart,

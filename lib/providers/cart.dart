@@ -49,7 +49,7 @@ class Cart with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeSingleItem(String productId) {
+  void removeSingleItem(String productId, {bool isCartButton = false}) {
     if (!_items.containsKey(productId)) {
       return;
     }
@@ -64,8 +64,10 @@ class Cart with ChangeNotifier {
           image: currentProduct.image,
         ),
       );
-      notifyListeners();
+    } else if (isCartButton) {
+      _items.remove(productId);
     }
+    notifyListeners();
   }
 
   void removeItem(String id) {

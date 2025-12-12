@@ -1,5 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import 'package:food_menu/models/cart_item.dart';
+import '../models/cart_item.dart';
 import 'package:intl/intl.dart';
 
 class OrderItem extends StatefulWidget {
@@ -23,7 +25,7 @@ class _OrderItemState extends State<OrderItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Column(
         children: [
           ListTile(
@@ -40,14 +42,19 @@ class _OrderItemState extends State<OrderItem> {
           ),
           if (_expandItem)
             Container(
-              height: 100,
+              padding: const EdgeInsets.all(5),
+              height: min(widget.products.length * 20 + 40, 100),
               child: ListView.builder(
+                itemExtent: 40,
                 itemCount: widget.products.length,
                 itemBuilder: (ctx, i) {
                   final product = widget.products[i];
                   return ListTile(
                     title: Text(product.title),
-                    trailing: Text("${product.quantity}x \$${product.price}"),
+                    trailing: Text(
+                      "${product.quantity}x \$${product.price}",
+                      style: TextStyle(color: Colors.grey),
+                    ),
                   );
                 },
               ),
