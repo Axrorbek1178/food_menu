@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_menu/models/product.dart';
+import 'package:food_menu/noti_service.dart';
 
 class Products with ChangeNotifier {
   List<Product> _list = [
@@ -51,6 +52,10 @@ class Products with ChangeNotifier {
       imageUrl: product.imageUrl,
     );
     _list.add(newProduct);
+    NotiService().showNotification(
+      title: "YANGI MAHSULOT QO'SHILDI",
+      body: "${product.title} nomli yangi maxsulot qo'shdingiz",
+    );
     notifyListeners();
   }
 

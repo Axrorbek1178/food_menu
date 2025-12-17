@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_menu/noti_service.dart';
 import 'package:food_menu/screens/edit_product_screen.dart';
 
 import '../providers/orders.dart';
@@ -13,6 +14,10 @@ import './screens/product_details_screen.dart';
 import './styles/my_shop_style.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // init notifications
+  NotiService().initNotification();
   runApp(MyApp());
 }
 
