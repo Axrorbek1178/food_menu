@@ -42,9 +42,22 @@ class Products with ChangeNotifier {
     return _list.where((product) => product.isFavorite).toList();
   }
 
-  void addProduct() {
-    //_list.add(value);
+  void addProduct(Product product) {
+    final newProduct = Product(
+      id: UniqueKey().toString(),
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      imageUrl: product.imageUrl,
+    );
+    _list.add(newProduct);
     notifyListeners();
+  }
+
+  void updateProduct(Product updatedProduct) {
+    final productIndex = _list.indexWhere(
+      (product) => product.id == updatedProduct.id,
+    );
   }
 
   Product findById(String productId) {
