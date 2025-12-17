@@ -68,11 +68,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
               },
               onSaved: (newValue) {
                 _product = Product(
-                  id: "",
+                  id: _product.id,
                   title: _product.title,
                   description: _product.description,
                   price: _product.price,
                   imageUrl: newValue!,
+                  isFavorite: _product.isFavorite,
                 );
               },
             ),
@@ -117,7 +118,11 @@ class _EditProductScreenState extends State<EditProductScreen> {
     });
     if (isValid && _hasImage) {
       _form.currentState!.save();
-      Provider.of<Products>(context, listen: false).addProduct(_product);
+      if (_product.id.isEmpty) {
+        Provider.of<Products>(context, listen: false).addProduct(_product);
+      } else {
+        Provider.of<Products>(context, listen: false).updateProduct(_product);
+      }
       Navigator.of(context).pop();
     }
   }
@@ -157,17 +162,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                   onSaved: (newValue) {
                     _product = Product(
-                      id: "",
+                      id: _product.id,
                       title: newValue!,
                       description: _product.description,
                       price: _product.price,
                       imageUrl: _product.imageUrl,
+                      isFavorite: _product.isFavorite,
                     );
                   },
                 ),
                 const SizedBox(height: 10),
                 TextFormField(
-                  initialValue: _product.price.toStringAsFixed(2),
+                  initialValue: _product.price == 0
+                      ? ''
+                      : _product.price.toStringAsFixed(2),
                   decoration: InputDecoration(
                     labelText: "Narxi",
                     border: OutlineInputBorder(),
@@ -177,11 +185,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   // focusNode: _priceFocus,
                   onSaved: (newValue) {
                     _product = Product(
-                      id: "",
+                      id: _product.id,
                       title: _product.title,
                       description: _product.description,
                       price: double.parse(newValue!),
                       imageUrl: _product.imageUrl,
+                      isFavorite: _product.isFavorite,
                     );
                   },
                   validator: (value) {
@@ -215,11 +224,12 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   },
                   onSaved: (newValue) {
                     _product = Product(
-                      id: "",
+                      id: _product.id,
                       title: _product.title,
                       description: newValue!,
                       price: _product.price,
                       imageUrl: _product.imageUrl,
+                      isFavorite: _product.isFavorite,
                     );
                   },
                 ),

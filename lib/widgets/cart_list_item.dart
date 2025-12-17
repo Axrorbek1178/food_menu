@@ -24,7 +24,7 @@ class CartListItem extends StatelessWidget {
       builder: (ctx) {
         return AlertDialog(
           title: const Text("Ishonchingiz komilmi?"),
-          content: const Text('Savatchadan bu mahsulotni o\'chimoqda! '),
+          content: const Text('Savatchadan bu mahsulot  o\'chimoqda! '),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
