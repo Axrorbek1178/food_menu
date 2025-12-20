@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:food_menu/models/product.dart';
 import 'package:food_menu/noti_service.dart';
+import 'package:http/http.dart' as http;
 
 class Products with ChangeNotifier {
   List<Product> _list = [
@@ -44,19 +47,35 @@ class Products with ChangeNotifier {
   }
 
   void addProduct(Product product) {
-    final newProduct = Product(
-      id: UniqueKey().toString(),
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      imageUrl: product.imageUrl,
-    );
-    _list.add(newProduct);
-    NotiService().showNotification(
-      title: "YANGI MAHSULOT QO'SHILDI",
-      body: "${product.title} nomli yangi maxsulot qo'shdingiz",
-    );
-    notifyListeners();
+    final url =
+        "https://fir-app-7c5b7-default-rtdb.firebaseio.com/products.json";
+    http
+        .post(
+          Uri.parse(url),
+          body: jsonEncode({
+            'title': product.title,
+            'description': product.description,
+            'price': product.price,
+            'imageUrl': product.imageUrl,
+            'isFavorite': product.isFavorite,
+          }),
+        )
+        .then((response) {
+          final name = (jsonDecode(response.body) as Map<String, dynamic>)['name'];
+          final newProduct = Product(
+            id: name, 
+            title: product.title,
+            description: product.description,
+            price: product.price,
+            imageUrl: product.imageUrl,
+          );
+          _list.add(newProduct);
+          NotiService().showNotification(
+            title: "YANGI MAHSULOT QO'SHILDI",
+            body: "${product.title} nomli yangi maxsulot qo'shdingiz",
+          );
+          notifyListeners();
+        });
   }
 
   void updateProduct(Product updatedProduct) {
