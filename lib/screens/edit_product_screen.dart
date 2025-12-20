@@ -24,6 +24,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
 
   var _hasImage = true;
   var _init = true;
+  var _isLoading = false;
 
   @override
   void didChangeDependencies() {
@@ -118,12 +119,44 @@ class _EditProductScreenState extends State<EditProductScreen> {
     });
     if (isValid && _hasImage) {
       _form.currentState!.save();
+      setState(() {
+        _isLoading = true;
+      });
       if (_product.id.isEmpty) {
-        Provider.of<Products>(context, listen: false).addProduct(_product);
+        Provider.of<Products>(context, listen: false)
+            .addProduct(_product)
+            .catchError((error) {
+              return showDialog<Null>(
+                context: context,
+                builder: (ctx) {
+                  return AlertDialog(
+                    title: const Text("Xatolik!"),
+                    content: const Text(
+                      "Maxsulot qo'shishda xatolik sodir bo'ldi",
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(ctx).pop(),
+                        child: const Text("Okay"),
+                      ),
+                    ],
+                  );
+                },
+              );
+            })
+            .then((_) {
+              setState(() {
+                _isLoading = false;
+              });
+              Navigator.of(context).pop();
+            });
       } else {
         Provider.of<Products>(context, listen: false).updateProduct(_product);
+        setState(() {
+          _isLoading = false;
+        });
+        Navigator.of(context).pop();
       }
-      Navigator.of(context).pop();
     }
   }
 
@@ -136,141 +169,147 @@ class _EditProductScreenState extends State<EditProductScreen> {
         ],
         title: const Text("Mahsulot qo'shish"),
       ),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Form(
-          key: _form,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                TextFormField(
-                  initialValue: _product.title,
-                  decoration: InputDecoration(
-                    labelText: "Nomi",
-                    border: OutlineInputBorder(),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator.adaptive())
+          : GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: Form(
+                key: _form,
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        initialValue: _product.title,
+                        decoration: InputDecoration(
+                          labelText: "Nomi",
+                          border: OutlineInputBorder(),
+                        ),
+                        textInputAction: TextInputAction.next,
+                        // onFieldSubmitted: (_) {
+                        //   FocusScope.of(context).requestFocus(_priceFocus);
+                        // },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Iltimos mahsulot nomini kiriting.";
+                          }
+                          return null;
+                        },
+                        onSaved: (newValue) {
+                          _product = Product(
+                            id: _product.id,
+                            title: newValue!,
+                            description: _product.description,
+                            price: _product.price,
+                            imageUrl: _product.imageUrl,
+                            isFavorite: _product.isFavorite,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        initialValue: _product.price == 0
+                            ? ''
+                            : _product.price.toStringAsFixed(2),
+                        decoration: InputDecoration(
+                          labelText: "Narxi",
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.number,
+                        textInputAction: TextInputAction.next,
+                        // focusNode: _priceFocus,
+                        onSaved: (newValue) {
+                          _product = Product(
+                            id: _product.id,
+                            title: _product.title,
+                            description: _product.description,
+                            price: double.parse(newValue!),
+                            imageUrl: _product.imageUrl,
+                            isFavorite: _product.isFavorite,
+                          );
+                        },
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Iltimos mahsulot narxini kiriting.";
+                          } else if (double.tryParse(value) == null) {
+                            return "Iltimos, to'g'ri narx kiriting";
+                          } else if (double.parse(value) < 1) {
+                            return "Mahsulot narxi 0 dan katta bo'lishi kerak";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        initialValue: _product.description,
+                        decoration: InputDecoration(
+                          labelText: "Qo'shimcha ma'lumot",
+                          alignLabelWithHint: true,
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: 5,
+                        keyboardType: TextInputType.multiline,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Iltimos mahsulot ta'rifini kiriting.";
+                          } else if (value.length < 10) {
+                            return "Iltimos, batafsil ma'lumot kiriting.";
+                          }
+                          return null;
+                        },
+                        onSaved: (newValue) {
+                          _product = Product(
+                            id: _product.id,
+                            title: _product.title,
+                            description: newValue!,
+                            price: _product.price,
+                            imageUrl: _product.imageUrl,
+                            isFavorite: _product.isFavorite,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      Card(
+                        margin: const EdgeInsets.all(0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                          side: BorderSide(
+                            color: _hasImage ? Colors.grey : Colors.red,
+                          ),
+                        ),
+                        child: InkWell(
+                          onTap: () => _showImageDialog(context),
+                          splashColor: Theme.of(
+                            context,
+                          ).primaryColor.withAlpha(70),
+                          highlightColor: Colors.transparent,
+                          borderRadius: BorderRadius.circular(5),
+                          child: Container(
+                            alignment: Alignment.center,
+                            height: 180,
+                            width: double.infinity,
+                            child: _product.imageUrl.isEmpty
+                                ? Text(
+                                    "Asosiy Rasm URLni kiriting",
+                                    style: TextStyle(
+                                      color: _hasImage
+                                          ? Colors.black
+                                          : Colors.red,
+                                    ),
+                                  )
+                                : Image.network(
+                                    width: double.infinity,
+                                    _product.imageUrl,
+                                    fit: BoxFit.cover,
+                                  ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  textInputAction: TextInputAction.next,
-                  // onFieldSubmitted: (_) {
-                  //   FocusScope.of(context).requestFocus(_priceFocus);
-                  // },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Iltimos mahsulot nomini kiriting.";
-                    }
-                    return null;
-                  },
-                  onSaved: (newValue) {
-                    _product = Product(
-                      id: _product.id,
-                      title: newValue!,
-                      description: _product.description,
-                      price: _product.price,
-                      imageUrl: _product.imageUrl,
-                      isFavorite: _product.isFavorite,
-                    );
-                  },
                 ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  initialValue: _product.price == 0
-                      ? ''
-                      : _product.price.toStringAsFixed(2),
-                  decoration: InputDecoration(
-                    labelText: "Narxi",
-                    border: OutlineInputBorder(),
-                  ),
-                  keyboardType: TextInputType.number,
-                  textInputAction: TextInputAction.next,
-                  // focusNode: _priceFocus,
-                  onSaved: (newValue) {
-                    _product = Product(
-                      id: _product.id,
-                      title: _product.title,
-                      description: _product.description,
-                      price: double.parse(newValue!),
-                      imageUrl: _product.imageUrl,
-                      isFavorite: _product.isFavorite,
-                    );
-                  },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Iltimos mahsulot narxini kiriting.";
-                    } else if (double.tryParse(value) == null) {
-                      return "Iltimos, to'g'ri narx kiriting";
-                    } else if (double.parse(value) < 1) {
-                      return "Mahsulot narxi 0 dan katta bo'lishi kerak";
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  initialValue: _product.description,
-                  decoration: InputDecoration(
-                    labelText: "Qo'shimcha ma'lumot",
-                    alignLabelWithHint: true,
-                    border: OutlineInputBorder(),
-                  ),
-                  maxLines: 5,
-                  keyboardType: TextInputType.multiline,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Iltimos mahsulot ta'rifini kiriting.";
-                    } else if (value.length < 10) {
-                      return "Iltimos, batafsil ma'lumot kiriting.";
-                    }
-                    return null;
-                  },
-                  onSaved: (newValue) {
-                    _product = Product(
-                      id: _product.id,
-                      title: _product.title,
-                      description: newValue!,
-                      price: _product.price,
-                      imageUrl: _product.imageUrl,
-                      isFavorite: _product.isFavorite,
-                    );
-                  },
-                ),
-                const SizedBox(height: 10),
-                Card(
-                  margin: const EdgeInsets.all(0),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    side: BorderSide(
-                      color: _hasImage ? Colors.grey : Colors.red,
-                    ),
-                  ),
-                  child: InkWell(
-                    onTap: () => _showImageDialog(context),
-                    splashColor: Theme.of(context).primaryColor.withAlpha(70),
-                    highlightColor: Colors.transparent,
-                    borderRadius: BorderRadius.circular(5),
-                    child: Container(
-                      alignment: Alignment.center,
-                      height: 180,
-                      width: double.infinity,
-                      child: _product.imageUrl.isEmpty
-                          ? Text(
-                              "Asosiy Rasm URLni kiriting",
-                              style: TextStyle(
-                                color: _hasImage ? Colors.black : Colors.red,
-                              ),
-                            )
-                          : Image.network(
-                              width: double.infinity,
-                              _product.imageUrl,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
     );
   }
 }

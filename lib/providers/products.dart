@@ -46,10 +46,10 @@ class Products with ChangeNotifier {
     return _list.where((product) => product.isFavorite).toList();
   }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) {
     final url =
         "https://fir-app-7c5b7-default-rtdb.firebaseio.com/products.json";
-    http
+    return http
         .post(
           Uri.parse(url),
           body: jsonEncode({
@@ -61,9 +61,10 @@ class Products with ChangeNotifier {
           }),
         )
         .then((response) {
-          final name = (jsonDecode(response.body) as Map<String, dynamic>)['name'];
+          final name =
+              (jsonDecode(response.body) as Map<String, dynamic>)['name'];
           final newProduct = Product(
-            id: name, 
+            id: name,
             title: product.title,
             description: product.description,
             price: product.price,
@@ -75,6 +76,9 @@ class Products with ChangeNotifier {
             body: "${product.title} nomli yangi maxsulot qo'shdingiz",
           );
           notifyListeners();
+        })
+        .catchError((error) {
+          throw error;
         });
   }
 
