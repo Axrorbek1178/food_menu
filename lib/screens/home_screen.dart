@@ -26,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final cart = Provider.of<Cart>(context);
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Mening Do\'konim'),
         actions: [
           PopupMenuButton(
