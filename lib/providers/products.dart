@@ -1,9 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:food_menu/models/product.dart';
-import 'package:food_menu/noti_service.dart';
+import '../models/product.dart';
+import '../noti_service.dart';
 import 'package:http/http.dart' as http;
+import '../services/http_exception.dart';
 
 class Products with ChangeNotifier {
   List<Product> _list = [
@@ -142,9 +143,16 @@ class Products with ChangeNotifier {
       "https://fir-app-7c5b7-default-rtdb.firebaseio.com/products/$id.json",
     );
     try {
-      await http.delete(url);
+      var deletingProduct = _list.firstWhere((product) => product.id == id);
+      final productIndex = _list.indexWhere((product) => product.id == id);
       _list.removeWhere((product) => product.id == id);
+      final response = await http.delete(url);
       notifyListeners();
+      if (response.statusCode >= 400) {
+        _list.insert(productIndex, deletingProduct);
+        notifyListeners();
+        throw HttpException("Kechirasiz, o'chirishda xatolik");
+      }
     } catch (e) {
       rethrow;
     }
