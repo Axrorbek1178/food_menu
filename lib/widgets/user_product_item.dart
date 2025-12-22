@@ -40,6 +40,7 @@ class UserProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context);
+    final scaffoldMassenger = ScaffoldMessenger.of(context);
     return Card(
       child: ListTile(
         leading: CircleAvatar(backgroundImage: NetworkImage(product.imageUrl)),
@@ -57,11 +58,17 @@ class UserProductItem extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {
-                _notifyUserAboutDelete(context, () {
-                  Provider.of<Products>(
-                    context,
-                    listen: false,
-                  ).deleteProduct(product.id);
+                _notifyUserAboutDelete(context, () async {
+                  try {
+                    await Provider.of<Products>(
+                      context,
+                      listen: false,
+                    ).deleteProduct(product.id);
+                  } catch (e) {
+                    scaffoldMassenger.showSnackBar(
+                      SnackBar(content: Text(e.toString())),
+                    );
+                  }
                 });
               },
               icon: Icon(Icons.delete, color: Colors.red),
