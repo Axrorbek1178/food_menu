@@ -14,44 +14,52 @@ class OrdersScreen extends StatefulWidget {
 }
 
 class _OrdersScreenState extends State<OrdersScreen> {
-  var _isLoading = false;
+  late Future _ordersFuture;
+
+  Future _getOrdersFuture() {
+    return Provider.of<Orders>(context, listen: false).getOrdersFromFirebase();
+  }
+
   @override
   void initState() {
-    Future.delayed(Duration.zero).then((_) {
-      setState(() {
-        _isLoading = true;
-      });
-      Provider.of<Orders>(context, listen: false).getOrdersFromFirebase().then((
-        _,
-      ) {
-        setState(() {
-          _isLoading = false;
-        });
-      });
-    });
+    _ordersFuture = _getOrdersFuture();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final orders = Provider.of<Orders>(context);
     return Scaffold(
       appBar: AppBar(title: Text("BUYURTMALAR")),
-      body: orders.items.isEmpty
-          ? const Center(child: Text("Buyurtmalar mavjud emas!"))
-          : _isLoading
-          ? const Center(child: CircularProgressIndicator.adaptive())
-          : ListView.builder(
-              itemCount: orders.items.length,
-              itemBuilder: (ctx, i) {
-                final order = orders.items[i];
-                return OrderItem(
-                  totalPrice: order.totalPrice,
-                  date: order.date,
-                  products: order.products,
-                );
-              },
-            ),
+      body: FutureBuilder(
+        future: _ordersFuture,
+        builder: (ctx, dataSnapshot) {
+          if (dataSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator.adaptive());
+          } else {
+            if (dataSnapshot.error == null) {
+              return Consumer<Orders>(
+                builder: (context, orders, child) {
+                  return orders.items.isEmpty
+                      ? const Center(child: Text("Buyurtmalar mavjud emas!"))
+                      : ListView.builder(
+                          itemCount: orders.items.length,
+                          itemBuilder: (ctx, i) {
+                            final order = orders.items[i];
+                            return OrderItem(
+                              totalPrice: order.totalPrice,
+                              date: order.date,
+                              products: order.products,
+                            );
+                          },
+                        );
+                },
+              );
+            } else {
+              return const Center(child: Text("Xatolik yuz berdi!"));
+            }
+          }
+        },
+      ),
       drawer: const AppDrawer(),
     );
   }
