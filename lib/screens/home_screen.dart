@@ -12,7 +12,7 @@ enum FiltersOtions { Favorites, All }
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
-  static const routName = '/';
+  static const routName = '/home';
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_menu/noti_service.dart';
+import 'package:food_menu/screens/auth_screen.dart';
 import 'package:food_menu/screens/edit_product_screen.dart';
 
 import '../providers/orders.dart';
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: theme,
-        initialRoute: HomeScreen.routName,
+        home: const AuthScreen(),
         routes: {
           HomeScreen.routName: (ctx) => HomeScreen(),
           ProductDetailsScreen.routeName: (ctx) => const ProductDetailsScreen(),
