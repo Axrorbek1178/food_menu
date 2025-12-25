@@ -21,6 +21,26 @@ class _AuthScreenState extends State<AuthScreen> {
   var _loading = false;
   Map<String, String> _authData = {'email': '', 'password': ''};
 
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: Text("Xatolik"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(ctx).pop();
+              },
+              child: Text("Okay!"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
       //save form
@@ -44,11 +64,24 @@ class _AuthScreenState extends State<AuthScreen> {
           ).signUp(_authData['email']!, _authData['password']!);
         }
       } on HttpException catch (error) {
-        var errorMessage = "Xatolik sodir bo'ldi";
-        print(error);
+        var errorMessage = "Xatolik sodir bo'ldi. ";
+        if (error.message.contains('EMAIL_EXISTS')) {
+          errorMessage =
+              "Kechirasiz! ,bu emaildan foydalanuchi ro'yxatdan o'tgan.";
+        } else if (error.message.contains('INVALID_EMAIL')) {
+          errorMessage = "To'g'ri email kiriting. ";
+        } else if (error.message.contains('WEAK_PASSWORD')) {
+          errorMessage = "Juda oson parol";
+        } else if (error.message.contains('EMAIL_NOT_FOUND')) {
+          errorMessage = "Bu email bilan foydalanuvchi topilmadi.";
+        } else if (error.message.contains('INVALID_PASSWORD')) {
+          errorMessage = "Parol noto'gri";
+        }
+        _showErrorDialog(errorMessage);
       } catch (e) {
         var errorMessage =
             "Kechirasiz xatolik sodir bo'ldi. Qaytadan o'rinib ko'ring";
+        _showErrorDialog(errorMessage);
       }
       setState(() {
         _loading = false;

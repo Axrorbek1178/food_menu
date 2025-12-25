@@ -38,17 +38,23 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<Cart>(create: (ctx) => Cart()),
         ChangeNotifierProvider<Orders>(create: (ctx) => Orders()),
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: theme,
-        home: const AuthScreen(),
-        routes: {
-          HomeScreen.routName: (ctx) => HomeScreen(),
-          ProductDetailsScreen.routeName: (ctx) => const ProductDetailsScreen(),
-          CartScreen.routeName: (ctx) => const CartScreen(),
-          OrdersScreen.routName: (ctx) => const OrdersScreen(),
-          ManageProductScreen.routeName: (ctx) => const ManageProductScreen(),
-          EditProductScreen.routeName: (ctx) => const EditProductScreen(),
+      child: Consumer<Auth>(
+        builder: (BuildContext ctx, authData, Widget? child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: theme,
+            home: authData.isAuth ? const HomeScreen() : AuthScreen(),
+            routes: {
+              HomeScreen.routName: (ctx) => HomeScreen(),
+              ProductDetailsScreen.routeName: (ctx) =>
+                  const ProductDetailsScreen(),
+              CartScreen.routeName: (ctx) => const CartScreen(),
+              OrdersScreen.routName: (ctx) => const OrdersScreen(),
+              ManageProductScreen.routeName: (ctx) =>
+                  const ManageProductScreen(),
+              EditProductScreen.routeName: (ctx) => const EditProductScreen(),
+            },
+          );
         },
       ),
     );

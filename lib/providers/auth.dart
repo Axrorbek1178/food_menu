@@ -10,6 +10,21 @@ class Auth with ChangeNotifier {
   String? _userId;
   static const apikey = "AIzaSyAbPN6a1TciTPrh0pJA0A3Uf5ewelliaO4";
 
+  bool get isAuth {
+    return _token != null;
+  }
+
+  String? get token {
+    if (_expiryDate != null &&
+        _expiryDate!.isAfter(DateTime.now()) &&
+        _token != null) {
+      // token mavjud
+      return _token;
+    }
+    // token mavjud emas
+    return null;
+  }
+
   Future<void> _authenticate(
     String email,
     String password,
@@ -31,6 +46,12 @@ class Auth with ChangeNotifier {
       if (data['error'] != null) {
         throw HttpException(data['error']['message']);
       }
+      _token = data['idToken'];
+      _expiryDate = DateTime.now().add(
+        Duration(seconds: int.parse(data['expiresIn'])),
+      );
+      _userId = data['localId'];
+      notifyListeners();
     } catch (e) {
       rethrow;
     }
