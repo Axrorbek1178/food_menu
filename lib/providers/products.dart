@@ -38,6 +38,11 @@ class Products with ChangeNotifier {
     //       'https://images.unsplash.com/photo-1759588073186-1d4ac7e33623?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     // ),
   ];
+  String? _authToken;
+
+  void setParams(String authToken) {
+    _authToken = authToken;
+  }
 
   List<Product> get list {
     return [..._list];
@@ -49,7 +54,7 @@ class Products with ChangeNotifier {
 
   Future<void> getProductsFromFirebase() async {
     final url = Uri.parse(
-      "https://fir-app-7c5b7-default-rtdb.firebaseio.com/products.json",
+      "https://fir-app-7c5b7-default-rtdb.firebaseio.com/products.json?auth=$_authToken",
     );
     try {
       final response = await http.get(url);
