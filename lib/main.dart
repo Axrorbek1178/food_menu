@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:food_menu/noti_service.dart';
-import 'package:food_menu/screens/auth_screen.dart';
-import 'package:food_menu/screens/edit_product_screen.dart';
+
+import '../providers/products.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/orders.dart';
 import '../screens/manage_product_screen.dart';
 import '../screens/orders_screen.dart';
 import '../screens/cart_screen.dart';
 import '../providers/cart.dart';
-import '../providers/products.dart';
-import 'package:provider/provider.dart';
 import './screens/home_screen.dart';
 import './screens/product_details_screen.dart';
 import './styles/my_shop_style.dart';
+import '../noti_service.dart';
+import '../providers/auth.dart';
+import '../screens/auth_screen.dart';
+import '../screens/edit_product_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,6 +33,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider<Auth>(create: (ctx) => Auth()),
         ChangeNotifierProvider<Products>(create: (ctx) => Products()),
         ChangeNotifierProvider<Cart>(create: (ctx) => Cart()),
         ChangeNotifierProvider<Orders>(create: (ctx) => Orders()),
