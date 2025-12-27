@@ -83,7 +83,7 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     final url = Uri.parse(
-      "https://fir-app-7c5b7-default-rtdb.firebaseio.com/products.json",
+      "https://fir-app-7c5b7-default-rtdb.firebaseio.com/products.json?auth=$_authToken",
     );
 
     try {
@@ -123,7 +123,7 @@ class Products with ChangeNotifier {
     );
     if (productIndex >= 0) {
       final url = Uri.parse(
-        "https://fir-app-7c5b7-default-rtdb.firebaseio.com/products/${updatedProduct.id}.json",
+        "https://fir-app-7c5b7-default-rtdb.firebaseio.com/products/${updatedProduct.id}.json?auth=$_authToken",
       );
       try {
         await http.patch(
@@ -145,7 +145,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url = Uri.parse(
-      "https://fir-app-7c5b7-default-rtdb.firebaseio.com/products/$id.json",
+      "https://fir-app-7c5b7-default-rtdb.firebaseio.com/products/$id.json?auth=$_authToken",
     );
     try {
       var deletingProduct = _list.firstWhere((product) => product.id == id);
