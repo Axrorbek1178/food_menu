@@ -54,9 +54,12 @@ class Products with ChangeNotifier {
     return _list.where((product) => product.isFavorite).toList();
   }
 
-  Future<void> getProductsFromFirebase() async {
+  Future<void> getProductsFromFirebase([bool filterByUser = false]) async {
+    final filterString = filterByUser
+        ? 'orderBy="creatorId"&equalTo="$_userId"'
+        : '';
     final url = Uri.parse(
-      'https://fir-app-7c5b7-default-rtdb.firebaseio.com/products.json?auth=$_authToken&orderBy="creatorId"&equalTo="$_userId"',
+      'https://fir-app-7c5b7-default-rtdb.firebaseio.com/products.json?auth=$_authToken&$filterString',
     );
     try {
       final response = await http.get(url);
