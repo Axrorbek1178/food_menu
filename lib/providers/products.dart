@@ -41,7 +41,7 @@ class Products with ChangeNotifier {
   String? _authToken;
   String? _userId;
 
-  void setParams(String authToken, String userId) {
+  void setParams(String? authToken, String? userId) {
     _authToken = authToken;
     _userId = userId;
   }

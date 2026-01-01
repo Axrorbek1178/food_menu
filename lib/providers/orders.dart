@@ -14,7 +14,7 @@ class Orders with ChangeNotifier {
     return [..._items];
   }
 
-  void setParams(String token, String userId) {
+  void setParams(String? token, String? userId) {
     _authToken = token;
     _userId = userId;
   }
