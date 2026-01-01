@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:food_menu/providers/networ_provider.dart';
+import 'package:food_menu/screens/splash_screen.dart';
 
 import '../providers/products.dart';
 import 'package:provider/provider.dart';
@@ -45,13 +47,28 @@ class MyApp extends StatelessWidget {
           update: (ctx, auth, previousOrders) =>
               previousOrders!..setParams(auth.token, auth.userId),
         ),
+        ChangeNotifierProvider<NetworkProvider>(
+          create: (ctx) => NetworkProvider(),
+        ),
       ],
       child: Consumer<Auth>(
         builder: (BuildContext ctx, authData, Widget? child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
             theme: theme,
-            home: authData.isAuth ? const HomeScreen() : AuthScreen(),
+            home: authData.isAuth
+                ? const HomeScreen()
+                : FutureBuilder(
+                    future: authData.autoLogin(),
+                    builder: (c, autoLoginData) {
+                      if (autoLoginData.connectionState ==
+                          ConnectionState.waiting) {
+                        return const SplashScreen();
+                      } else {
+                        return const AuthScreen();
+                      }
+                    },
+                  ),
             routes: {
               HomeScreen.routName: (ctx) => HomeScreen(),
               ProductDetailsScreen.routeName: (ctx) =>
